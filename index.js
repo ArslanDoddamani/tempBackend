@@ -10,6 +10,10 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3001;
 
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
 // Endpoint to process .eml file from a given URL
 app.post("/upload", async (req, res) => {
   const { url } = req.body;
