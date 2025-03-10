@@ -10,10 +10,6 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3001;
 
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
 // Endpoint to process .eml file from a given URL
 app.post("/upload", async (req, res) => {
   const { url } = req.body;
@@ -45,12 +41,13 @@ app.post("/upload", async (req, res) => {
         to: parsed.to?.text,
         from: parsed.from?.text,
         subject: parsed.subject || "(No Subject)",
-        date: parsed.date,
+        date: (parsed.date).toString(),
         cc: parsed.cc ? parsed.cc.text : null,
         bcc: parsed.bcc ? parsed.bcc.text : null,
-        body: parsed.html,
+        body: parsed.html || parsed.textAsHtml || "(No Content)",
         attachments: attachments,
       };
+      
 
       res.json(emailData);
     });
@@ -58,6 +55,10 @@ app.post("/upload", async (req, res) => {
     console.error("Error downloading .eml file:", error.message);
     res.status(500).json({ error: "Failed to download or process .eml file" });
   }
+});
+
+app.get("/", (req, res) => {
+  res.send("Hello World");
 });
 
 app.listen(PORT, () => {
